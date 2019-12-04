@@ -101,7 +101,7 @@ public class MultiSignature {
 			byte[][] pks;
 			String txNewHex;
 			String sig;
-			//构建交易，这里要外挂一个配置文件，读取合约地址
+			//构建交易，asset传入参数，zpt/gala/contract address
 			if (commandLine.hasOption("from") && commandLine.hasOption("to") && commandLine.hasOption("amount") && commandLine.hasOption("asset"))
 			{
 				fromAddr = commandLine.getOptionValue("from");
@@ -115,25 +115,8 @@ public class MultiSignature {
 				else
 				{
 					try {
-						int line = Integer.parseInt(commandLine.getOptionValue("asset"));
-						BufferedReader br = new BufferedReader(new FileReader("contract.txt"));
-						 
 						String contractaddress = null;
-						int current = 1;
-						while ((contractaddress = br.readLine()) != null) {
-							if(current==line)
-								break;
-							else
-								current+=1;
-						}
-						if(contractaddress == null) {
-							System.out.println("-----------------------------------------------");
-							System.out.println("can't find this contract, check your number:" + line);
-							System.exit(0);
-						}
-						System.out.println("contractaddress:" + contractaddress);
-						br.close();
-
+						contractaddress = commandLine.getOptionValue("asset");
 
 						List<String> inputarg = new ArrayList<>();
 						inputarg.add(fromAddr); 
@@ -147,7 +130,7 @@ public class MultiSignature {
 						tx = zptSdk.vm().makeInvokeCodeTransactionWasm(contractaddress, (String) null, constract.tobytes(), fromAddr,
 								20000, 1);
 					}catch(Exception e) {
-						
+						e.printStackTrace();
 					}
 				}
 				System.out.println("-----------------------------------------------");
